@@ -1,15 +1,15 @@
 Package: palint
-Title: What the Package Does (One Line, Title Case)
+Title: This package currently contains all helper functions I privately use in my projects.
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Gregor",
+           family = "Mathes",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "gregor.mathes@uni-bayreuth.de",
+           comment = c(ORCID = "0000-0002-2788-1173"))
+Description: Currently only some helper functions. I plan to expand this package later on to serve as a 
+    helper in calculating palaeoclimate interactions.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
