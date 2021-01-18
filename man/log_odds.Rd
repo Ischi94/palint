@@ -25,9 +25,6 @@ interval.}
 \item{print.result}{Character. Either "vector" for output given in a vector or
 "df" for output given within a tibble (default).}
 }
-\value{
-
-}
 \description{
 \code{log_odds} computes the log odds ratio between two binary outcomes.
 }

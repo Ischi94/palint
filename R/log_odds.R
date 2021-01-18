@@ -16,7 +16,6 @@
 #'@param print.result Character. Either "vector" for output given in a vector or
 #'  "df" for output given within a tibble (default).
 #'
-#'@return
 #'@export
 #'
 #'@examples # If we have a hypothetical group of smokers (exposed) and non-smokers (not exposed),
@@ -38,7 +37,7 @@ log_odds <- function(n00, n01, n10, n11, alpha = 0.05, print.result = "df") {
   OR <- (n00 * n11) / (n01 * n10)
 
   siglog <- sqrt((1 / n00) + (1 / n01) + (1 / n10) + (1 / n11))
-  zalph <- qnorm(1 - alpha / 2)
+  zalph <- stats::qnorm(1 - alpha / 2)
   logOR <- log(OR)
   loglo <- logOR - zalph * siglog
   loghi <- logOR + zalph * siglog
@@ -59,6 +58,5 @@ log_odds <- function(n00, n01, n10, n11, alpha = 0.05, print.result = "df") {
   if(print.result == "df"){
     return(log_odds_output)
   }
-
 
 }
