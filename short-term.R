@@ -1,9 +1,16 @@
 dat3 <- data.frame(x = rnorm(10), stg = 1:10)
 
 
-short_term <- function(data, value, bin){
+short_term <- function(data, value, bin, bin.one = "earliest"){
+  data <- data %>%
+    tibble::as_tibble()
+
+  if(bin.one == "latest") {
+    data <- data %>%
+      dplyr::arrange(dplyr::desc({{bin}}))
+    }
+
   data %>%
-    tibble::as_tibble() %>%
     dplyr::mutate(lag.val = dplyr::lead({{value}}),
                   lag.bin = dplyr::lead({{bin}})) %>%
     dplyr::group_by({{value}}) %>%
@@ -18,4 +25,4 @@ short_term <- function(data, value, bin){
     dplyr::ungroup()
 }
 
-short_term(data = dat3, value = x, bin = stg)
+short_term(data = dat3, value = x, bin = stg, bin.one = "latest")
