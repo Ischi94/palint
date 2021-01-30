@@ -3,18 +3,19 @@
 #'\code{log_odds} computes the log odds ratio between two binary outcomes.
 #'
 #'
-#'@param n00 A scalar for the number of observations exposed with the condition.
-#'@param n01 A scalar for the number of observations exposed without the
+#'@param n00 (numeric) A scalar for the number of observations exposed with the
 #'  condition.
-#'@param n10 A scalar for the number of observations not exposed with the
-#'  condition.
-#'@param n11 A scalar for the number of observations not exposed without the
-#'  condition.
-#'@param alpha Numeric value defining the probability for the wald confidence
-#'  interval. Default is an alpha of 0.05, corresponding to a 0.95 % confidence
-#'  interval.
-#'@param print.result Character. Either "vector" for output given in a vector or
-#'  "df" for output given within a tibble (default).
+#'@param n01 (numeric) A scalar for the number of observations exposed without
+#'  the condition.
+#'@param n10 (numeric) A scalar for the number of observations not exposed with
+#'  the condition.
+#'@param n11 (numeric) A scalar for the number of observations not exposed
+#'  without the condition.
+#'@param alpha (numeric) A value defining the probability for the wald
+#'  confidence interval. Default is an alpha of 0.05, corresponding to a 0.95 %
+#'  confidence interval.
+#'@param print.result (character) Either "vector" for output given in a vector
+#'  or "df" for output given within a tibble (default).
 #'
 #'@export
 #'

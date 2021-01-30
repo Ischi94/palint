@@ -12,11 +12,9 @@
 #'  \code{print.result}, please confirm that the code is doing the desired task
 #'  by double-checking with print.result = "text".
 #'
-#'@param old.value A numeric value or vector. This is the baseline for the
-#'  comparison.
-#'@param new.value A numeric value or vector. This value is compared to the
-#'  baseline.
-#'@param print.result Character. Either "value", "percentage", or "text".
+#'@param old.value (numeric) The baseline for the comparison.
+#'@param new.value (numeric) The value which is compared to the baseline.
+#'@param print.result (character) Either "value", "percentage", or "text".
 #'
 #'@export
 #'
