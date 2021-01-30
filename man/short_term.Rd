@@ -39,7 +39,7 @@ change of the value compared to the previous bin. For example, if we have
 20°C at bin 10, and 22°C at bin 11, the short-term temperature change from
 bin 10 to 11 is 2. If bin 11 is older than bin 10, one needs to specify this
 by setting bin.one = "youngest" and the corresponding short-term temperature
-change would hence be -2. If there is more than one observation per bin, and
+change would hence be calculated from bin 11 to bin 10. If there is more than one observation per bin, and
 mult.observations is set to TRUE, the regression is based on all values per
 bin.
 }

@@ -20,7 +20,7 @@
 #' 20°C at bin 10, and 22°C at bin 11, the short-term temperature change from
 #' bin 10 to 11 is 2. If bin 11 is older than bin 10, one needs to specify this
 #' by setting bin.one = "youngest" and the corresponding short-term temperature
-#' change would hence be -2. If there is more than one observation per bin, and
+#' change would hence be calculated from bin 11 to bin 10. If there is more than one observation per bin, and
 #' mult.observations is set to TRUE, the regression is based on all values per
 #' bin.
 #'
@@ -59,7 +59,7 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
 
   if(mult.observations == FALSE){
     suppressMessages(
-      data %>%
+      output <- data %>%
         dplyr::mutate(lag.val = dplyr::lag({{value}}),
                       lag.bin = dplyr::lag({{bin}})) %>%
         dplyr::group_by({{value}}) %>%
@@ -99,11 +99,19 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
       dplyr::full_join(data.mult)
 
     if(bin.one == "oldest"){
-      data.mult %>%
+      output <- data.mult %>%
         dplyr::arrange({{bin}})
     }else if(bin.one == "youngest"){
-      data.mult %>%
+      output <- data.mult %>%
         dplyr::arrange(dplyr::desc({{bin}}))
     }
   }
+
+  if(bin.one == "youngest") {
+    output <- output %>%
+      dplyr::mutate(short_term = short_term*-1)
+  }
+
+
+  return(output)
 }
