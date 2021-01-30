@@ -7,13 +7,11 @@
 perc_change(old.value, new.value, print.result = "value")
 }
 \arguments{
-\item{old.value}{A numeric value or vector. This is the baseline for the
-comparison.}
+\item{old.value}{(numeric) The baseline for the comparison.}
 
-\item{new.value}{A numeric value or vector. This value is compared to the
-baseline.}
+\item{new.value}{(numeric) The value which is compared to the baseline.}
 
-\item{print.result}{Character. Either "value", "percentage", or "text".}
+\item{print.result}{(character) Either "value", "percentage", or "text".}
 }
 \description{
 \code{perc_change} returns the percentage change between two values, where one
