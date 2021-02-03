@@ -49,7 +49,7 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
   comb.val = NULL
   comb.bin = NULL
   model = NULL
-  stg = NULL
+  val.com = NULL
 
   if(!tibble::is_tibble(data)){
     data <- data %>%
@@ -92,13 +92,13 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
 
     suppressMessages(
       output <- data.mult %>%
-        dplyr::mutate(x = purrr::map(data, rlang::as_label(rlang::enquo(value)))) %>%
+        dplyr::mutate(val.com = purrr::map(data, rlang::as_label(rlang::enquo(value)))) %>%
         dplyr::ungroup() %>%
-        dplyr::select({{value}}, {{bin}}) %>%
-        dplyr::mutate(lag.val = dplyr::lag({{value}}),
+        dplyr::select(val.com, {{bin}}) %>%
+        dplyr::mutate(lag.val = dplyr::lag(val.com),
                       lag.bin = dplyr::lag({{bin}})) %>%
         dplyr::group_by({{bin}}) %>%
-        dplyr::mutate(comb.val = purrr::map2({{value}}, lag.val, c),
+        dplyr::mutate(comb.val = purrr::map2(val.com, lag.val, c),
                       comb.bin = list(rep(c({{bin}}, lag.bin), each = 2))) %>%
         tidyr::drop_na() %>%
         dplyr::select({{bin}}, comb.val, comb.bin) %>%
