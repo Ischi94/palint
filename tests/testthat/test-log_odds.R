@@ -4,7 +4,6 @@ test_that("The log odds ratio of all equal groups is 0", {
 
 test_that("If n00 and n10 are equal, and n01 and n11 are equal, then the log odds ratio is 0", {
   expect_equal(log_odds(2, 1, 2, 1, print.result = "vector")[[1]], 0)
-
 })
 
 test_that("Setting alpha to 1 returns confidence intervals at 0", {

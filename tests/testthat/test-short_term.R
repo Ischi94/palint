@@ -81,14 +81,14 @@ test_that("the output is a vector for print.result = 'vector'", {
     value = x,
     bin = stg,
     mult.observations = TRUE,
-    print.result = 'vector'
+    print.result = "vector"
   )), TRUE)
 
   expect_equal(is.vector(short_term(
     data = data.frame(x = c(10, 12), stg = c(1, 2)),
     value = x,
     bin = stg,
-    print.result = 'vector'
+    print.result = "vector"
   )), TRUE)
 })
 

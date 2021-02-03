@@ -42,95 +42,104 @@
 #' @examples
 #' dfr <- data.frame(x = rnorm(10), stg = 1:10)
 #' short_term(data = dfr, value = x, bin = stg)
-short_term <- function(data, value, bin, bin.one = "oldest", mult.observations = FALSE, print.result = "df"){
+short_term <- function(data, value, bin, bin.one = "oldest", mult.observations = FALSE, print.result = "df") {
+  lag.bin <- NULL
+  lag.val <- NULL
+  comb.val <- NULL
+  comb.bin <- NULL
+  model <- NULL
+  val.com <- NULL
 
-  lag.bin = NULL
-  lag.val = NULL
-  comb.val = NULL
-  comb.bin = NULL
-  model = NULL
-  val.com = NULL
-
-  if(!tibble::is_tibble(data)){
+  if (!tibble::is_tibble(data)) {
     data <- data %>%
       tibble::as_tibble()
   }
 
   ori.data <- data
 
-  if(bin.one != "oldest" && bin.one != "youngest"){
+  if (bin.one != "oldest" && bin.one != "youngest") {
     stop("bin.one can either be 'earliest' or 'latest'")
-  } else if(bin.one == "oldest") {
+  } else if (bin.one == "oldest") {
     data <- data %>%
-      dplyr::arrange({{bin}})
-  } else if(bin.one == "youngest") {
+      dplyr::arrange({{ bin }})
+  } else if (bin.one == "youngest") {
     data <- data %>%
-      dplyr::arrange(dplyr::desc({{bin}}))
+      dplyr::arrange(dplyr::desc({{ bin }}))
   }
 
-  if(mult.observations == FALSE){
+  if (mult.observations == FALSE) {
     suppressMessages(
       output <- data %>%
-        dplyr::mutate(lag.val = dplyr::lag({{value}}),
-                      lag.bin = dplyr::lag({{bin}})) %>%
-        dplyr::group_by({{value}}) %>%
-        dplyr::mutate(comb.val = list(c({{value}}, lag.val)),
-                      comb.bin = list(c({{bin}}, lag.bin))) %>%
-        dplyr::select({{bin}}, comb.val, comb.bin) %>%
+        dplyr::mutate(
+          lag.val = dplyr::lag({{ value }}),
+          lag.bin = dplyr::lag({{ bin }})
+        ) %>%
+        dplyr::group_by({{ value }}) %>%
+        dplyr::mutate(
+          comb.val = list(c({{ value }}, lag.val)),
+          comb.bin = list(c({{ bin }}, lag.bin))
+        ) %>%
+        dplyr::select({{ bin }}, comb.val, comb.bin) %>%
         tidyr::nest(data = c(comb.val, comb.bin)) %>%
-        dplyr::mutate(model = list(stats::lm(comb.val[[1]] ~ comb.bin[[1]], data = data[[1]])),
-                      short_term = purrr::map(model, "coefficients"),
-                      short_term = purrr::map_dbl(short_term, purrr::pluck, 2)) %>%
-        dplyr::select({{value}}, {{bin}}, short_term) %>%
+        dplyr::mutate(
+          model = list(stats::lm(comb.val[[1]] ~ comb.bin[[1]], data = data[[1]])),
+          short_term = purrr::map(model, "coefficients"),
+          short_term = purrr::map_dbl(short_term, purrr::pluck, 2)
+        ) %>%
+        dplyr::select({{ value }}, {{ bin }}, short_term) %>%
         dplyr::ungroup() %>%
         dplyr::left_join(ori.data)
     )
-  }else if(mult.observations == TRUE){
+  } else if (mult.observations == TRUE) {
     data.mult <- data %>%
-      dplyr::group_by({{bin}}) %>%
+      dplyr::group_by({{ bin }}) %>%
       tidyr::nest()
 
     suppressMessages(
       output <- data.mult %>%
         dplyr::mutate(val.com = purrr::map(data, rlang::as_label(rlang::enquo(value)))) %>%
         dplyr::ungroup() %>%
-        dplyr::select(val.com, {{bin}}) %>%
-        dplyr::mutate(lag.val = dplyr::lag(val.com),
-                      lag.bin = dplyr::lag({{bin}})) %>%
-        dplyr::group_by({{bin}}) %>%
-        dplyr::mutate(comb.val = purrr::map2(val.com, lag.val, c),
-                      comb.bin = list(rep(c({{bin}}, lag.bin), each = 2))) %>%
+        dplyr::select(val.com, {{ bin }}) %>%
+        dplyr::mutate(
+          lag.val = dplyr::lag(val.com),
+          lag.bin = dplyr::lag({{ bin }})
+        ) %>%
+        dplyr::group_by({{ bin }}) %>%
+        dplyr::mutate(
+          comb.val = purrr::map2(val.com, lag.val, c),
+          comb.bin = list(rep(c({{ bin }}, lag.bin), each = 2))
+        ) %>%
         tidyr::drop_na() %>%
-        dplyr::select({{bin}}, comb.val, comb.bin) %>%
+        dplyr::select({{ bin }}, comb.val, comb.bin) %>%
         tidyr::nest(data = c(comb.val, comb.bin)) %>%
-        dplyr::mutate(model = list(stats::lm(comb.val[[1]] ~ comb.bin[[1]], data = data[[1]])),
-                      short_term = purrr::map(model, "coefficients"),
-                      short_term = purrr::map_dbl(short_term, purrr::pluck, 2)) %>%
-        dplyr::select({{bin}}, short_term) %>%
+        dplyr::mutate(
+          model = list(stats::lm(comb.val[[1]] ~ comb.bin[[1]], data = data[[1]])),
+          short_term = purrr::map(model, "coefficients"),
+          short_term = purrr::map_dbl(short_term, purrr::pluck, 2)
+        ) %>%
+        dplyr::select({{ bin }}, short_term) %>%
         dplyr::ungroup() %>%
         dplyr::full_join(data.mult)
     )
-
-    }
-
-  if(bin.one == "oldest"){
-    output <- output %>%
-      dplyr::arrange({{bin}})
-  }else if(bin.one == "youngest"){
-    output <- output %>%
-      dplyr::arrange(dplyr::desc({{bin}})) %>%
-      dplyr::mutate(short_term = short_term*-1)
   }
 
-  if(print.result != "df" && print.result != "vector"){
-    stop("print.result can either be 'df' or 'vector'")
-  }else if(print.result == "df"){
-    return(output)
-  }else if(print.result == "vector"){
+  if (bin.one == "oldest") {
     output <- output %>%
-      dplyr::select({{bin}}, short_term) %>%
+      dplyr::arrange({{ bin }})
+  } else if (bin.one == "youngest") {
+    output <- output %>%
+      dplyr::arrange(dplyr::desc({{ bin }})) %>%
+      dplyr::mutate(short_term = short_term * -1)
+  }
+
+  if (print.result != "df" && print.result != "vector") {
+    stop("print.result can either be 'df' or 'vector'")
+  } else if (print.result == "df") {
+    return(output)
+  } else if (print.result == "vector") {
+    output <- output %>%
+      dplyr::select({{ bin }}, short_term) %>%
       tibble::deframe()
     return(output)
   }
-
 }

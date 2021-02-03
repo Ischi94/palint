@@ -23,7 +23,7 @@ test_that("print.result ='text' a character expression", {
 })
 
 test_that("Error is given when non-numeric values are used", {
-  expect_error(perc_change("a", 4,))
+  expect_error(perc_change("a", 4, ))
 })
 
 test_that("Default output is rounded properly", {
