@@ -74,21 +74,24 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
           lag.val = dplyr::lag({{ value }}),
           lag.bin = dplyr::lag({{ bin }})
         ) %>%
-        dplyr::group_by({{ value }}) %>%
+        dplyr::group_by({{ bin }}) %>%
         dplyr::mutate(
           comb.val = list(c({{ value }}, lag.val)),
           comb.bin = list(c({{ bin }}, lag.bin))
         ) %>%
-        dplyr::select({{ bin }}, comb.val, comb.bin) %>%
-        tidyr::nest(data = c(comb.val, comb.bin)) %>%
-        dplyr::mutate(
-          model = list(stats::lm(comb.val[[1]] ~ comb.bin[[1]], data = data[[1]])),
-          short_term = purrr::map(model, "coefficients"),
-          short_term = purrr::map_dbl(short_term, purrr::pluck, 2)
-        ) %>%
-        dplyr::select({{ value }}, {{ bin }}, short_term) %>%
+        tidyr::drop_na() %>%
         dplyr::ungroup() %>%
-        dplyr::left_join(ori.data)
+        tidyr::unnest(cols = c(comb.val, comb.bin)) %>%
+        dplyr::nest_by({{ bin }}) %>%
+        dplyr::mutate(model = list(stats::lm(comb.val ~ comb.bin, data = data))) %>%
+        dplyr::ungroup() %>%
+        dplyr::mutate(
+          short_term = purrr::map(model, "coefficients"),
+          short_term = purrr::map_dbl(short_term, purrr::pluck, 2)) %>%
+        dplyr::select({{ bin }}, short_term) %>%
+        dplyr::full_join(ori.data) %>%
+        dplyr::select({{ value }}, {{ bin }}, short_term) %>%
+        dplyr::arrange({{ bin }})
     )
   } else if (mult.observations == TRUE) {
     data.mult <- data %>%
