@@ -2,9 +2,16 @@
 % Please edit documentation in R/short_term.R
 \name{short_term}
 \alias{short_term}
-\title{Calculate short-term changes for binned data.}
+\title{Calculate short-term changes for binned data}
 \usage{
-short_term(data, value, bin, bin.one = "oldest", mult.observations = FALSE)
+short_term(
+  data,
+  value,
+  bin,
+  bin.one = "oldest",
+  mult.observations = FALSE,
+  print.result = "df"
+)
 }
 \arguments{
 \item{data}{(data.frame) A data frame or tibble containing the value column
@@ -15,20 +22,23 @@ short-term changes should be calculated.}
 
 \item{bin}{(unquoted expression) Variable name of the discrete bin numbers.}
 
-\item{bin.one}{(character) Either "oldest" when the first bin (normally 1) is
-the oldest out of all bins or "youngest" when the first bin is the most
-recent one. "oldest" is the default and corresponds to the convention that
-stage 1 is the oldest geologic stage.}
+\item{bin.one}{(character) Either "oldest" when the first bin is the oldest
+out of all bins or "youngest" when the first bin is the most recent one.
+"oldest" is the default and corresponds to the convention that stage 1 is
+the oldest geologic stage.}
 
 \item{mult.observations}{(logical) Are there more observations per bin?
 Defaults to one observation per bin.}
+
+\item{print.result}{(character) Either "vector" for output given in a named
+vector or "df" for output given within a tibble (default).}
 }
 \value{
-The output is a tibble data frame containing the value column, the
+The output is a tibble data frame (default) containing the value column, the
 bin column and the calculated short-term change.
 }
 \description{
-Calculate short-term changes for binned data.
+\code{short_term} computes the bin-to-bin change of a specified value using linear regression.
 }
 \section{Details}{
 
@@ -39,9 +49,16 @@ change of the value compared to the previous bin. For example, if we have
 20°C at bin 10, and 22°C at bin 11, the short-term temperature change from
 bin 10 to 11 is 2. If bin 11 is older than bin 10, one needs to specify this
 by setting bin.one = "youngest" and the corresponding short-term temperature
-change would hence be calculated from bin 11 to bin 10. If there is more than one observation per bin, and
-mult.observations is set to TRUE, the regression is based on all values per
-bin.
+change would hence be calculated from bin 11 to bin 10. If there is more than
+one observation per bin, and mult.observations is set to TRUE, the regression
+is based on all values per bin. The default output is a data frame (tibble)
+with the first column corresponding to the raw value of interest, the second
+column the bins, and the third columns to the calculated short-term change.
+The data frame is ordered starting with the oldest bin in the first row. If
+there are more observations per bin (mult.observations = "TRUE"), the output
+is a nested data frame with all observations per bin grouped together. If
+print.result is set to "vector", the output is a named vector with the
+short-term change as values and each corresponding bin as name.
 }
 
 \examples{
