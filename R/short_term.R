@@ -111,8 +111,7 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
         dplyr::full_join(data.mult)
     )
 
-
-  }
+    }
 
   if(bin.one == "oldest"){
     output <- output %>%
@@ -120,7 +119,7 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
   }else if(bin.one == "youngest"){
     output <- output %>%
       dplyr::arrange(dplyr::desc({{bin}})) %>%
-      dplyr::mutate(short_term2 = short_term*-1)
+      dplyr::mutate(short_term = short_term*-1)
   }
 
   if(print.result != "df" && print.result != "vector"){

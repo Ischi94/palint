@@ -15,7 +15,24 @@ test_that("the change from 10 to 12 is minus two, when the first value is younge
   )[[2, 3]], -2)
 })
 
+test_that("the change from 1 c(10, 12) to 2 c(11, 13) is one, when the first value is older", {
+  expect_equal(short_term(
+    data = data.frame(x = 10:13, stg = rep(1:2, 2)),
+    value = x,
+    bin = stg,
+    mult.observations = TRUE
+  )[[2, 2]], 1)
+})
 
+test_that("the change from 1 c(10, 12) to 2 c(11, 13) is minus one, when the first value is younger", {
+  expect_equal(short_term(
+    data = data.frame(x = 10:13, stg = rep(1:2, 2)),
+    value = x,
+    bin = stg,
+    mult.observations = TRUE,
+    bin.one = "youngest"
+  )[[2, 2]], -1)
+})
 
 test_that("when there is no previous bin, NA is returned", {
   expect_equal(short_term(
