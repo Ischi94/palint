@@ -119,14 +119,14 @@ short_term <- function(data, value, bin, bin.one = "oldest", mult.observations =
         dplyr::select({{ bin }}, comb.val, comb.bin) %>%
         tidyr::unnest(cols = c(comb.val, comb.bin)) %>%
         dplyr::nest_by({{ bin }}) %>%
-        dplyr::mutate(model = list(lm(comb.val ~ comb.bin, data = data))) %>%
+        dplyr::mutate(model = list(stats::lm(comb.val ~ comb.bin, data = data))) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(
           short_term = purrr::map(model, "coefficients"),
           short_term = purrr::map_dbl(short_term, purrr::pluck, 2)) %>%
         dplyr::select({{ bin }}, short_term) %>%
         dplyr::full_join(data.mult) %>%
-        dplyr::select({{ value }} := data, {{ bin }}, short_term) %>%
+        dplyr::select(data, {{ bin }}, short_term) %>%
         dplyr::arrange({{ bin }})
     )
   }
